@@ -236,3 +236,9 @@ The project follows the Omakase Ruby style. Check it with:
 ```bash
 bin/rubocop
 ```
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
