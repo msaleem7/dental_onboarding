@@ -1,0 +1,32 @@
+<div class="page">
+  <h1>Candidates</h1>
+
+  <% if @candidates.any? %>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Job function</th>
+            <th>City</th>
+            <th>Completed</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @candidates.each do |candidate| %>
+            <tr>
+              <td><%= candidate.full_name %></td>
+              <td><%= candidate.job_function&.humanize %></td>
+              <td><%= candidate.city %></td>
+              <td><%= candidate.onboarding_completed_at.to_date %></td>
+              <td><%= link_to "View", candidate_path(candidate) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="empty-state">No candidates have completed their profile yet.</p>
+  <% end %>
+</div>

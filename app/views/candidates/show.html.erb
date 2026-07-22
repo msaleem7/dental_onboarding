@@ -1,0 +1,115 @@
+<div class="page--narrow">
+  <h1><%= candidate.full_name %></h1>
+  <p class="page-subtitle"><%= candidate.job_function&.humanize %></p>
+
+  <div class="card">
+    <h2>Contact</h2>
+    <p><strong>Email:</strong> <%= candidate.email %></p>
+    <p><strong>Phone:</strong> <%= candidate.phone_number %></p>
+    <p><strong>Location:</strong> <%= [ candidate.city, candidate.country ].compact_blank.join(", ") %></p>
+    <p><%= link_to "Download CV", cv_candidate_path(candidate), class: "btn" %></p>
+  </div>
+
+  <div class="card">
+    <h2>Job preferences</h2>
+    <p><strong>Preferred regions:</strong> <%= candidate.preferred_regions.join(", ") %></p>
+    <p><strong>Max travel time:</strong> <%= candidate.max_travel_time_minutes %> minutes</p>
+    <p><strong>Transport:</strong> <%= candidate.transport_types.join(", ") %></p>
+    <p><strong>Search status:</strong> <%= candidate.search_status&.humanize %></p>
+    <% if candidate.reason_for_looking.present? %>
+      <p><strong>Reason for looking:</strong> <%= candidate.reason_for_looking %></p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Employment &amp; compensation</h2>
+    <p><strong>Employment types:</strong> <%= candidate.employment_types.join(", ") %></p>
+    <% if candidate.show_desired_salary? %>
+      <p><strong>Desired gross salary:</strong> <%= candidate.desired_gross_salary %></p>
+    <% end %>
+    <% if candidate.show_desired_percentage? %>
+      <p><strong>Desired percentage:</strong> <%= candidate.desired_percentage %></p>
+    <% end %>
+    <% if candidate.show_average_daily_revenue? %>
+      <p><strong>Average daily revenue:</strong> <%= candidate.average_daily_revenue %></p>
+    <% end %>
+    <% if candidate.show_big_registration? %>
+      <p><strong>BIG registration:</strong> <%= candidate.big_registration_status&.humanize %> (<%= candidate.big_number %>)</p>
+    <% end %>
+    <p><strong>Years of experience:</strong> <%= candidate.years_of_experience %></p>
+  </div>
+
+  <div class="card">
+    <h2>Education</h2>
+    <% if candidate.educations.any? %>
+      <ul>
+        <% candidate.educations.each do |education| %>
+          <li>
+            <strong><%= education.study %></strong>
+            <% if education.institution.present? %> — <%= education.institution %><% end %>
+            <% if education.needs_review? %><span class="badge badge--review">Needs review</span><% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="empty-state">No education entries.</p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Work experience</h2>
+    <% if candidate.work_experiences.any? %>
+      <ul>
+        <% candidate.work_experiences.each do |experience| %>
+          <li>
+            <strong><%= experience.job_title %></strong> at <%= experience.company_name %>
+            <% if experience.needs_review? %><span class="badge badge--review">Needs review</span><% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="empty-state">No work experience entries.</p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Skills</h2>
+    <% if candidate.skills.any? || candidate.skill_suggestions_text.present? %>
+      <p><%= candidate.skills.map(&:name).join(", ") %></p>
+      <% if candidate.skill_suggestions_text.present? %>
+        <p><span class="badge badge--review">Suggested</span> <%= candidate.skill_suggestions_text %></p>
+      <% end %>
+    <% else %>
+      <p class="empty-state">No skills listed.</p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Languages</h2>
+    <% if candidate.candidate_languages.any? %>
+      <ul>
+        <% candidate.candidate_languages.each do |candidate_language| %>
+          <li><%= candidate_language.language.name %> (<%= candidate_language.level %>)</li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="empty-state">No languages listed.</p>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <h2>Availability</h2>
+    <p><strong>Working days:</strong> <%= candidate.available_working_days.join(", ") %></p>
+    <p><strong>Available from:</strong> <%= candidate.available_from %></p>
+    <p><strong>Notice period:</strong> <%= candidate.notice_period %></p>
+  </div>
+
+  <% if candidate.motivation_for_employer.present? %>
+    <div class="card">
+      <h2>Motivation</h2>
+      <p><%= candidate.motivation_for_employer %></p>
+    </div>
+  <% end %>
+
+  <p><%= link_to "Back to candidates", candidates_path %></p>
+</div>
