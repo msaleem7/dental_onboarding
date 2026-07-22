@@ -46,7 +46,7 @@ gem "docx"
 
 # Optional LLM-backed CV parsing (used only when LLM_CV_PARSING_ENABLED=true and an API key is configured)
 gem "anthropic"
-gem "connection_pool", "~> 2.5"
+gem "connection_pool", "~> 3.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
