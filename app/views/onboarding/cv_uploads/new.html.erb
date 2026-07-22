@@ -1,0 +1,40 @@
+<div class="page--narrow">
+  <%= render "onboarding/steps", current: 1 %>
+  <h1>Upload your CV</h1>
+  <p class="page-subtitle">We'll read your CV and pre-fill your profile. You'll be able to review and correct anything before it's sent to a recruiter.</p>
+
+  <% if @latest_document.present? %>
+    <div class="flash flash--notice">
+      Your current CV is <strong><%= @latest_document.original_filename %></strong>.
+      Uploading a new file will refresh the details we read from it. Anything you edited yourself stays as it is.
+    </div>
+  <% end %>
+
+  <div class="card">
+    <%= form_with url: onboarding_cv_upload_path, multipart: true, scope: :candidate_document do |form| %>
+      <% if @document&.errors&.any? %>
+        <div class="flash flash--alert">
+          <ul>
+            <% @document.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="field field--required">
+        <%= form.label :file, "CV file (PDF, DOC, or DOCX, max #{CandidateDocuments::UploadLimits.max_size_bytes / 1.megabyte} MB)" %> <%= required_marker %>
+        <%= form.file_field :file, accept: CandidateDocuments::AllowedFileTypes::ALLOWED_EXTENSIONS.join(","), required: true %>
+      </div>
+
+      <div class="field checkbox-item">
+        <%= check_box_tag :consent, "1", false, id: "consent" %>
+        <%= label_tag :consent, "I consent to my CV being processed to build my candidate profile.", style: "font-weight:400; margin:0;" %>
+      </div>
+
+      <%= form.submit "Upload and continue" %>
+    <% end %>
+  </div>
+
+  <p><%= link_to "Skip &mdash; I'll fill in my profile manually".html_safe, edit_onboarding_profile_path %></p>
+</div>
