@@ -1,0 +1,10 @@
+New candidate profile completed
+
+<%= @profile.full_name %> has finished onboarding.
+
+Job function: <%= @profile.job_function&.humanize %>
+City: <%= @profile.city %>
+Email: <%= @profile.email %>
+Phone: <%= @profile.phone_number %>
+
+View candidate: <%= candidate_url(@profile) %>

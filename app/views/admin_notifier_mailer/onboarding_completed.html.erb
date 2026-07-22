@@ -1,0 +1,12 @@
+<h1>New candidate profile completed</h1>
+
+<p><strong><%= @profile.full_name %></strong> has finished onboarding.</p>
+
+<ul>
+  <li>Job function: <%= @profile.job_function&.humanize %></li>
+  <li>City: <%= @profile.city %></li>
+  <li>Email: <%= @profile.email %></li>
+  <li>Phone: <%= @profile.phone_number %></li>
+</ul>
+
+<p><%= link_to "View candidate", candidate_url(@profile) %></p>
