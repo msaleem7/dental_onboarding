@@ -1,0 +1,20 @@
+<div class="page--narrow">
+  <h1>Sign in</h1>
+
+  <div class="card">
+    <%= form_with url: session_path do |form| %>
+      <div class="field field--required">
+        <%= form.label :email_address %> <%= required_marker %>
+        <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "you@example.com", value: params[:email_address] %>
+      </div>
+      <div class="field field--required">
+        <%= form.label :password %> <%= required_marker %>
+        <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %>
+      </div>
+      <%= form.submit "Sign in" %>
+    <% end %>
+  </div>
+
+  <p><%= link_to "Forgot password?", new_password_path %></p>
+  <p>New here? <%= link_to "Create an account", new_registration_path %></p>
+</div>
