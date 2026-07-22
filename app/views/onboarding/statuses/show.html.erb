@@ -1,0 +1,15 @@
+<% content_for :head do %>
+  <meta http-equiv="refresh" content="2">
+<% end %>
+
+<div class="page--narrow">
+  <%= render "onboarding/steps", current: 1 %>
+  <h1>Reading your CV</h1>
+
+  <div class="card">
+    <div class="status-processing">
+      <div class="spinner"></div>
+      <span>We're reading <%= @document.original_filename %>&hellip; this usually takes a few seconds.</span>
+    </div>
+  </div>
+</div>

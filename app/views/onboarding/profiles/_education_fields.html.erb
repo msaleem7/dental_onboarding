@@ -1,0 +1,41 @@
+<div class="repeater-entry" data-repeater-target="item">
+  <% if f.object.persisted? && f.object.source_cv? %>
+    <span class="badge badge--cv">From CV<%= " — needs review" if f.object.needs_review? %></span>
+  <% end %>
+
+  <div class="form-row">
+    <div class="field field--required">
+      <%= f.label :study, "Study / programme" %> <%= required_marker %>
+      <%= f.text_field :study %>
+    </div>
+    <div class="field">
+      <%= f.label :institution %>
+      <%= f.text_field :institution %>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <%= f.label :level %>
+      <%= f.select :level, Education.levels.keys.map { |k| [ k.humanize, k ] }, include_blank: true %>
+    </div>
+    <div class="field">
+      <%= f.label :city_country, "City / country" %>
+      <%= f.text_field :city_country %>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <%= f.label :start_date %>
+      <%= f.date_field :start_date %>
+    </div>
+    <div class="field">
+      <%= f.label :end_date %>
+      <%= f.date_field :end_date %>
+    </div>
+  </div>
+
+  <%= f.hidden_field :_destroy %>
+  <button type="button" class="btn btn--secondary repeater-entry__remove" data-action="repeater#remove">Remove</button>
+</div>

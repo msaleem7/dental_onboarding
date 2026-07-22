@@ -1,0 +1,15 @@
+<div class="repeater-entry" data-repeater-target="item">
+  <div class="form-row">
+    <div class="field field--required">
+      <%= f.label :language_id, "Language" %> <%= required_marker %>
+      <%= f.collection_select :language_id, Language.order(:name), :id, :name, include_blank: true %>
+    </div>
+    <div class="field">
+      <%= f.label :level %>
+      <%= f.select :level, CandidateLanguages::Levels::LEVELS, include_blank: true %>
+    </div>
+  </div>
+
+  <%= f.hidden_field :_destroy %>
+  <button type="button" class="btn btn--secondary repeater-entry__remove" data-action="repeater#remove">Remove</button>
+</div>

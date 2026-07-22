@@ -1,0 +1,258 @@
+<div class="page--narrow">
+  <%= render "onboarding/steps", current: 2 %>
+  <h1>Complete your profile</h1>
+  <p class="page-subtitle">Review what we found on your CV — marked <span class="badge badge--cv">From CV</span> — and fill in anything missing.</p>
+  <p class="required-note"><%= required_marker %> Fields marked with an asterisk are required before you can submit.</p>
+  <p><%= link_to "Upload a different CV", new_onboarding_cv_upload_path %></p>
+
+  <%= form_with model: profile, url: onboarding_profile_path, method: :patch,
+        data: {
+          controller: "onboarding-form",
+          onboarding_form_big_eligible_value: CandidateProfiles::EligibilityRules::BIG_ELIGIBLE_FUNCTIONS.to_json,
+          onboarding_form_revenue_eligible_value: CandidateProfiles::EligibilityRules::REVENUE_ELIGIBLE_FUNCTIONS.to_json,
+          onboarding_form_salary_employment_types_value: %w[employed].to_json,
+          onboarding_form_percentage_employment_types_value: CandidateProfiles::EligibilityRules::PERCENTAGE_BASED_EMPLOYMENT_TYPES.to_json,
+          onboarding_form_skill_groups_value: CandidateProfiles::JobFunctionSkillGroups::JOB_FUNCTION_TO_SKILL_GROUP.to_json
+        } do |form| %>
+    <% if profile.errors.any? %>
+      <div class="flash flash--alert">
+        <ul>
+          <% profile.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="card">
+      <fieldset>
+        <legend>Personal details</legend>
+        <div class="form-row">
+          <div class="field field--required">
+            <%= form.label :first_name %> <%= required_marker %> <%= cv_badge_for(profile, :first_name) %>
+            <%= form.text_field :first_name %>
+          </div>
+          <div class="field field--required">
+            <%= form.label :last_name %> <%= required_marker %> <%= cv_badge_for(profile, :last_name) %>
+            <%= form.text_field :last_name %>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field field--required">
+            <%= form.label :email %> <%= required_marker %> <%= cv_badge_for(profile, :email) %>
+            <%= form.email_field :email %>
+          </div>
+          <div class="field field--required">
+            <%= form.label :phone_number %> <%= required_marker %> <%= cv_badge_for(profile, :phone_number) %>
+            <%= form.text_field :phone_number %>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field field--required">
+            <%= form.label :city %> <%= required_marker %> <%= cv_badge_for(profile, :city) %>
+            <%= form.text_field :city %>
+          </div>
+          <div class="field">
+            <%= form.label :country %> <%= cv_badge_for(profile, :country) %>
+            <%= form.text_field :country %>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="card">
+      <fieldset>
+        <legend>Job preferences</legend>
+        <div class="field field--required">
+          <%= form.label :job_function %> <%= required_marker %> <%= cv_badge_for(profile, :job_function) %>
+          <%= form.select :job_function, CandidateProfile.job_functions.keys.map { |k| [ k.humanize, k ] },
+                { include_blank: true },
+                data: { onboarding_form_target: "jobFunction", action: "change->onboarding-form#updateJobFunction" } %>
+        </div>
+
+        <div class="field field--required">
+          <label>Preferred regions <%= required_marker %></label>
+          <div class="checkbox-grid">
+            <%= form.collection_check_boxes :preferred_regions, CandidateProfiles::PreferredRegions::PREFERRED_REGIONS, :itself, :itself %>
+          </div>
+        </div>
+
+        <div class="field field--required">
+          <%= form.label :max_travel_time_minutes, "Maximum travel time (minutes)" %> <%= required_marker %>
+          <%= form.number_field :max_travel_time_minutes, min: 0 %>
+        </div>
+
+        <div class="field">
+          <label>Transport</label>
+          <div class="checkbox-grid">
+            <%= form.collection_check_boxes :transport_types, CandidateProfiles::TransportTypes::TRANSPORT_TYPES, :itself, :itself %>
+          </div>
+        </div>
+
+        <div class="field">
+          <%= form.label :search_status, "Job search status" %>
+          <%= form.select :search_status, CandidateProfile.search_statuses.keys.map { |k| [ k.humanize, k ] }, include_blank: true %>
+        </div>
+
+        <div class="field">
+          <%= form.label :reason_for_looking, "Why are you looking for a new role?" %>
+          <%= form.text_area :reason_for_looking, rows: 3 %>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="card">
+      <fieldset>
+        <legend>Employment &amp; compensation</legend>
+        <div class="field field--required">
+          <label>Employment type <%= required_marker %></label>
+          <div class="checkbox-grid">
+            <%= form.collection_check_boxes :employment_types, CandidateProfiles::EmploymentTypes::EMPLOYMENT_TYPES, :itself, :itself, {},
+                  data: { onboarding_form_target: "employmentType", action: "change->onboarding-form#updateEmploymentTypes" } %>
+          </div>
+        </div>
+
+        <div class="field" data-onboarding-form-target="salarySection">
+          <%= form.label :desired_gross_salary, "Desired gross monthly salary" %>
+          <%= form.number_field :desired_gross_salary, min: 0 %>
+        </div>
+
+        <div class="field" data-onboarding-form-target="percentageSection">
+          <%= form.label :desired_percentage, "Desired percentage" %>
+          <%= form.number_field :desired_percentage, min: 0, max: 100 %>
+        </div>
+
+        <div class="field" data-onboarding-form-target="revenueSection">
+          <%= form.label :average_daily_revenue %>
+          <%= form.number_field :average_daily_revenue, step: "0.01", min: 0 %>
+        </div>
+
+        <div class="field" data-onboarding-form-target="bigSection">
+          <%= form.label :big_registration_status, "BIG registration status" %>
+          <%= form.select :big_registration_status,
+                CandidateProfile.big_registration_statuses.keys.map { |k| [ k.humanize, k ] }, include_blank: true %>
+          <%= form.label :big_number, "BIG number" %>
+          <%= form.text_field :big_number %>
+        </div>
+
+        <div class="field">
+          <%= form.label :years_of_experience %> <%= cv_badge_for(profile, :years_of_experience) %>
+          <%= form.number_field :years_of_experience, min: 0, step: "0.5" %>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="card" data-controller="repeater">
+      <fieldset>
+        <legend>Education</legend>
+        <div data-repeater-target="list">
+          <%= form.fields_for :educations do |ef| %>
+            <%= render "education_fields", f: ef %>
+          <% end %>
+        </div>
+        <template data-repeater-target="template">
+          <%= form.fields_for :educations, Education.new, child_index: "NEW_RECORD" do |ef| %>
+            <%= render "education_fields", f: ef %>
+          <% end %>
+        </template>
+        <button type="button" class="btn btn--secondary" data-action="repeater#add">Add education</button>
+      </fieldset>
+    </div>
+
+    <div class="card" data-controller="repeater">
+      <fieldset>
+        <legend>Work experience</legend>
+        <div data-repeater-target="list">
+          <%= form.fields_for :work_experiences do |ef| %>
+            <%= render "work_experience_fields", f: ef %>
+          <% end %>
+        </div>
+        <template data-repeater-target="template">
+          <%= form.fields_for :work_experiences, WorkExperience.new, child_index: "NEW_RECORD" do |ef| %>
+            <%= render "work_experience_fields", f: ef %>
+          <% end %>
+        </template>
+        <button type="button" class="btn btn--secondary" data-action="repeater#add">Add work experience</button>
+      </fieldset>
+    </div>
+
+    <div class="card">
+      <fieldset>
+        <legend>Skills</legend>
+        <% CandidateProfiles::JobFunctionSkillGroups::JOB_FUNCTION_TO_SKILL_GROUP.values.uniq.each do |group| %>
+          <div class="field" data-onboarding-form-target="skillGroup" data-skill-group="<%= group %>">
+            <label><%= group.humanize %> skills</label>
+            <div class="checkbox-grid">
+              <%= form.collection_check_boxes :skill_ids, Skill.for_group(group), :id, :name %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="field">
+          <label>General skills</label>
+          <div class="checkbox-grid">
+            <%= form.collection_check_boxes :skill_ids, Skill.for_group("general"), :id, :name %>
+          </div>
+        </div>
+
+        <div class="field">
+          <%= form.label :skill_suggestions_text, "Other skills (comma-separated)" %>
+          <%= form.text_field :skill_suggestions_text %>
+          <p class="field-hint">Not on the list? Add them here and a recruiter will review.</p>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="card" data-controller="repeater">
+      <fieldset>
+        <legend>Languages <%= required_marker %></legend>
+        <p class="field-hint">Add at least one language.</p>
+        <div data-repeater-target="list">
+          <%= form.fields_for :candidate_languages do |ef| %>
+            <%= render "candidate_language_fields", f: ef %>
+          <% end %>
+        </div>
+        <template data-repeater-target="template">
+          <%= form.fields_for :candidate_languages, CandidateLanguage.new, child_index: "NEW_RECORD" do |ef| %>
+            <%= render "candidate_language_fields", f: ef %>
+          <% end %>
+        </template>
+        <button type="button" class="btn btn--secondary" data-action="repeater#add">Add language</button>
+      </fieldset>
+    </div>
+
+    <div class="card">
+      <fieldset>
+        <legend>Availability</legend>
+        <div class="field field--required">
+          <label>Available working days <%= required_marker %></label>
+          <div class="checkbox-grid">
+            <%= form.collection_check_boxes :available_working_days, CandidateProfiles::WorkingDays::WORKING_DAYS, :itself, :itself %>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field field--required">
+            <%= form.label :available_from %> <%= required_marker %>
+            <%= form.date_field :available_from %>
+          </div>
+          <div class="field">
+            <%= form.label :notice_period %>
+            <%= form.text_field :notice_period, placeholder: "e.g. 1 month" %>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="card">
+      <fieldset>
+        <legend>Additional information</legend>
+        <div class="field">
+          <%= form.label :motivation_for_employer, "What matters to you in your next employer?" %>
+          <%= form.text_area :motivation_for_employer, rows: 4 %>
+        </div>
+      </fieldset>
+    </div>
+
+    <%= form.submit "Submit my profile" %>
+  <% end %>
+</div>

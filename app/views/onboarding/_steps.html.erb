@@ -1,0 +1,19 @@
+<%#
+  Two-step progress tracker for the onboarding flow.
+  Pass `current:` as 1 (upload) or 2 (review) to highlight the active step.
+%>
+<% steps = [ [ 1, "Upload CV" ], [ 2, "Review profile" ] ] %>
+<ol class="steps" aria-label="Onboarding progress">
+  <% steps.each_with_index do |(number, title), index| %>
+    <% state = number < current ? "done" : (number == current ? "active" : "todo") %>
+    <li class="steps__item steps__item--<%= state %>">
+      <span class="steps__num">
+        <% if state == "done" %>&#10003;<% else %><%= number %><% end %>
+      </span>
+      <span><%= title %></span>
+    </li>
+    <% if index < steps.length - 1 %>
+      <span class="steps__bar" aria-hidden="true"></span>
+    <% end %>
+  <% end %>
+</ol>
